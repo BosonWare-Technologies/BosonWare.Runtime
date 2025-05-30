@@ -8,7 +8,7 @@
 	  <Authors>Realtin</Authors>
 	  <Company>BosonWare, Technologies</Company>
 	  <RootNamespace>BosonWare</RootNamespace>
-    	<PackageId>CodingBoson.Applications</PackageId>
+    <PackageId>BosonWare.Runtime</PackageId>
     <Version>1.0.0</Version>
     <PackageDescription>A lightweight .NET runtime helper library.</PackageDescription>
     <RepositoryUrl>https://github.com/CodingBoson/BosonWare.Runtime</RepositoryUrl>
