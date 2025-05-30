@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BosonWare.Runtime", "BosonWare.Runtime\BosonWare.Runtime.csproj", "{EB28B1AB-18DA-4451-8104-CFB8907F67E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BosonWare.Runtime.Lab", "BosonWare.Runtime.Lab\BosonWare.Runtime.Lab.csproj", "{E815796A-D81E-4DD4-8DB4-4DB942CA4FFB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EB28B1AB-18DA-4451-8104-CFB8907F67E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB28B1AB-18DA-4451-8104-CFB8907F67E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB28B1AB-18DA-4451-8104-CFB8907F67E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB28B1AB-18DA-4451-8104-CFB8907F67E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E815796A-D81E-4DD4-8DB4-4DB942CA4FFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E815796A-D81E-4DD4-8DB4-4DB942CA4FFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E815796A-D81E-4DD4-8DB4-4DB942CA4FFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E815796A-D81E-4DD4-8DB4-4DB942CA4FFB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {90325F5B-A702-414A-806F-501438CB4680}
+	EndGlobalSection
+EndGlobal
