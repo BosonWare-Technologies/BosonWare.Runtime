@@ -5,13 +5,22 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	  <LangVersion>preview</LangVersion>
-	  <Authors>Realtin</Authors>
-	  <Company>BosonWare, Technologies</Company>
-	  <RootNamespace>BosonWare</RootNamespace>
-    <PackageId>BosonWare.Runtime</PackageId>
-    <Version>1.0.0</Version>
-    <PackageDescription>A lightweight .NET runtime helper library.</PackageDescription>
-    <RepositoryUrl>https://github.com/CodingBoson/BosonWare.Runtime</RepositoryUrl>
+
+    	<Authors>Realtin (CodingBoson)</Authors>
+	    <Company>BosonWare, Technologies</Company>
+
+      <Version>1.0.0</Version>
+      <Copyright>BosonWare, Technologies</Copyright>
+      <PackageLicenseExpression>GPL-3.0</PackageLicenseExpression>
+      <PackageReadmeFile>README.md</PackageReadmeFile>
+
+      <PackageProjectUrl>https://github.com/BosonWare-Technologies/BosonWare.Runtime</PackageProjectUrl>
+      <RepositoryUrl>https://github.com/BosonWare-Technologies/BosonWare.Runtime</RepositoryUrl>
+
   </PropertyGroup>
+
+  <ItemGroup>
+      <None Include="../README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 
 </Project>
