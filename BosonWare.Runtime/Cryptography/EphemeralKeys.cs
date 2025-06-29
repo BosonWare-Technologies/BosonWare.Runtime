@@ -3,6 +3,13 @@ using System.Runtime.CompilerServices;
 
 namespace BosonWare.Cryptography;
 
+/// <summary>
+/// Provides methods for generating, retrieving, and managing ephemeral cryptographic keys in memory.
+/// </summary>
+/// <remarks>
+/// Ephemeral keys are short-lived keys intended for temporary use, such as session keys or non-persistent secrets.
+/// This class uses a thread-safe dictionary to store and retrieve keys by name, generating new keys as needed.
+/// </remarks>
 public static class EphemeralKeys
 {
     private static readonly ConcurrentDictionary<string, byte[]> _ephemeralKeys = [];
