@@ -18,6 +18,10 @@
       <PackageProjectUrl>https://github.com/BosonWare-Technologies/BosonWare.Runtime</PackageProjectUrl>
       <RepositoryUrl>https://github.com/BosonWare-Technologies/BosonWare.Runtime</RepositoryUrl>
 
+      <PackageReleaseNotes>
+      Added detailed XML documentation to public APIs in BinaryParser, AesEncryptionService, EphemeralKeys, and SignatureUtility.
+      </PackageReleaseNotes>
+
   </PropertyGroup>
 
   <ItemGroup>
