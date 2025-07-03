@@ -1,6 +1,6 @@
 ﻿namespace BosonWare.Cryptography;
 
-public interface IEncryptionService
+public interface IEncryptionService : IDisposable
 {
 	byte[] Encrypt(byte[] data);
 

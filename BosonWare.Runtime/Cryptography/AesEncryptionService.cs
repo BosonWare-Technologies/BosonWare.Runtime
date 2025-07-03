@@ -4,7 +4,7 @@ namespace BosonWare.Cryptography;
 /// <summary>
 /// Provides AES encryption and decryption services using a specified key.
 /// </summary>
-public sealed class AesEncryptionService : IEncryptionService, IDisposable
+public sealed class AesEncryptionService : IEncryptionService
 {
 	private readonly Aes _aes;
 

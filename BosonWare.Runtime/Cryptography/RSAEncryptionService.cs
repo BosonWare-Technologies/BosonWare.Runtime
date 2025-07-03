@@ -2,23 +2,17 @@
 
 namespace BosonWare.Cryptography;
 
-public sealed class RSAEncryptionService : IEncryptionService, IDisposable
+public sealed class RSAEncryptionService : IEncryptionService
 {
 	private readonly RSA rsa;
 
 	private RSAEncryptionService(RSA rsa) => this.rsa = rsa;
 
-	public byte[] Encrypt(byte[] data)
-	{
-		return rsa.Encrypt(data, RSAEncryptionPadding.OaepSHA256);
-	}
+    public byte[] Encrypt(byte[] data) => rsa.Encrypt(data, RSAEncryptionPadding.OaepSHA256);
 
-	public byte[] Decrypt(byte[] data)
-	{
-		return rsa.Decrypt(data, RSAEncryptionPadding.OaepSHA256);
-	}
+    public byte[] Decrypt(byte[] data) => rsa.Decrypt(data, RSAEncryptionPadding.OaepSHA256);
 
-	public void Dispose() => rsa.Dispose();
+    public void Dispose() => rsa.Dispose();
 
 	public static RSAEncryptionService FromPemKey(ReadOnlySpan<char> pemKey)
 	{

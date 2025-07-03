@@ -1,13 +1,43 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
 namespace BosonWare.Binary;
 
 /// <summary>
 /// Provides methods for parsing binary data into integer and floating-point representations.
 /// </summary>
-[Obsolete("Use FastBinaryParser instead.")]
-public static class BinaryParser
+public static class FastBinaryParser
 {
+    public enum ResultType
+    {
+        Invalid,
+        Int16,
+        Int32,
+        Int64,
+        Single,
+        Double
+    }
+
+    public readonly ref struct Result
+    {
+        public ResultType Type { get; }
+
+        public ReadOnlySpan<byte> Value { get; }
+
+        public Result(ResultType type, ReadOnlySpan<byte> value)
+        {
+            Type = type;
+            Value = value;
+        }
+
+        public short AsInt16() => BitConverter.ToInt16(Value);
+
+        public int AsInt32() => BitConverter.ToInt32(Value);
+
+        public long AsInt64() => BitConverter.ToInt64(Value);
+
+        public float AsSingle() => BitConverter.ToSingle(Value);
+
+        public double AsDouble() => BitConverter.ToDouble(Value);
+    }
+
     /// <summary>
     /// Attempts to parse a span of bytes as a signed integer (16, 32, or 64 bits).
     /// </summary>
@@ -23,36 +53,25 @@ public static class BinaryParser
     /// <returns>
     /// <c>true</c> if the bytes could be parsed as a supported integer type; otherwise, <c>false</c>.
     /// </returns>
-    public static bool TryParseInteger(
-        ReadOnlySpan<byte> bytes,
-        [NotNullWhen(true)] out string? type,
-        [NotNullWhen(true)] out string? value)
+    public static bool TryParseInteger(ReadOnlySpan<byte> bytes, out Result value)
     {
+        ResultType type;
         if (bytes.Length == 2) { // Check if the bytes array encodes a 16 bit integer.
-            type = "int16";
-
-            value = BitConverter.ToInt16(bytes).ToString();
-
-            return true;
+            type = ResultType.Int16;
         }
         else if (bytes.Length == 4) { // Check if the bytes array encodes a 32 bit integer.
-            type = "int32";
-
-            value = BitConverter.ToInt32(bytes).ToString();
-
-            return true;
+            type = ResultType.Int32;
         }
         else if (bytes.Length == 8) {  // Check if the bytes array encodes a 64 bit integer.
-            type = "int64";
-
-            value = BitConverter.ToInt64(bytes).ToString();
-
-            return true;
+            type = ResultType.Int64;
+        }
+        else {
+            type = ResultType.Invalid;
         }
 
-        type = value = null;
+        value = new Result(ResultType.Int16, bytes);
 
-        return false;
+        return type != ResultType.Invalid;
     }
 
     /// <summary>
@@ -70,29 +89,23 @@ public static class BinaryParser
     /// <returns>
     /// <c>true</c> if the bytes could be parsed as a supported floating-point type; otherwise, <c>false</c>.
     /// </returns>
-    public static bool TryParseFloat(
-        ReadOnlySpan<byte> bytes,
-        [NotNullWhen(true)] out string? type,
-        [NotNullWhen(true)] out string? value)
+    public static bool TryParseFloat(ReadOnlySpan<byte> bytes, out Result value)
     {
-        if (bytes.Length == 4) { // Check if the bytes array encodes a 32 bit floating point number.
-            type = "single";
-
-            value = BitConverter.ToSingle(bytes).ToString();
-
-            return true;
+        ResultType type;
+        if (bytes.Length == 4) // Check if the bytes array encodes a 16 bit integer.
+        {
+            type = ResultType.Single;
         }
-        else if (bytes.Length == 8) { // Check if the bytes array encodes a 64 bit floating point number.
-            type = "double";
-
-            value = BitConverter.ToDouble(bytes).ToString();
-
-            return true;
+        else if (bytes.Length == 8) // Check if the bytes array encodes a 32 bit integer.
+        {
+            type = ResultType.Double;
+        }
+        else {
+            type = ResultType.Invalid;
         }
 
-        type = value = null;
+        value = new Result(ResultType.Int16, bytes);
 
-        return false;
+        return type != ResultType.Invalid;
     }
-
 }
