@@ -29,8 +29,9 @@ A lightweight .NET cryptography and encoding utility library providing essential
 
 This project targets .NET 8.0.
 
-## Usage Example
+## Usage Examples
 
+### Encryption
 ```csharp
 // Base58 encoding
 var data = Encoding.UTF8.GetBytes("Hello, World!");
@@ -40,6 +41,18 @@ var encoded = Base58.EncodeData(data);
 var key = EphemeralKeys.Get("sessionKey");
 using var aes = new AesEncryptionService(key);
 var encrypted = aes.Encrypt(data);
+```
+
+### TUI
+```csharp
+// Write a message with ANSI markup.
+SmartConsole.WriteLine("[red]This text is red[/]\n[green]This text is green[/]");
+
+// Converting markup to raw ANSI text.
+var txt = AnsiCodes.ProcessMarkup("[bright]This is a test of the[/] [red]ANSI[/] codes in [green]BosonWare.Runtime[/].");
+
+Console.WriteLine(txt);
+
 ```
 
 ## License

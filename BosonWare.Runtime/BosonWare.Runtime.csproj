@@ -19,7 +19,7 @@
       <RepositoryUrl>https://github.com/BosonWare-Technologies/BosonWare.Runtime</RepositoryUrl>
 
       <PackageReleaseNotes>
-      
+      Add text encryption/decryption methods, and implement ANSI color markup utilities
       </PackageReleaseNotes>
 
   </PropertyGroup>
