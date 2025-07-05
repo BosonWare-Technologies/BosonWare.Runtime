@@ -18,6 +18,13 @@ A lightweight .NET cryptography and encoding utility library providing essential
     - Integer parsing (16/32/64 bit)
     - Floating point parsing (32/64 bit)
 
+- **Text User Interface (TUI) Utilities**
+    - Rich console output with ANSI color markup (e.g., [GREEN], [RED], [DIM])
+    - Thread-safe console writing and reading
+    - Animated console output for enhanced user feedback
+    - Secure password input with optional confirmation
+    - Built-in logging helpers for info, warning, and error messages
+
 ## Installation
 
 This project targets .NET 8.0.

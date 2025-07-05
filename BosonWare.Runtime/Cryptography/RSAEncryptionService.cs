@@ -12,7 +12,17 @@ public sealed class RSAEncryptionService : IEncryptionService
 
     public byte[] Decrypt(byte[] data) => rsa.Decrypt(data, RSAEncryptionPadding.OaepSHA256);
 
-    public void Dispose() => rsa.Dispose();
+	public string EncryptText(string text)
+	{
+		return Convert.ToBase64String(Encrypt(SystemEncoding.UTF8.GetBytes(text)));
+	}
+
+	public string DecryptText(string cipher)
+	{
+		return SystemEncoding.UTF8.GetString(Decrypt(Convert.FromBase64String(cipher)));
+	}
+	
+	public void Dispose() => rsa.Dispose();
 
 	public static RSAEncryptionService FromPemKey(ReadOnlySpan<char> pemKey)
 	{

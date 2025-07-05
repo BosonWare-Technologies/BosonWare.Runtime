@@ -57,5 +57,15 @@ public sealed class AesEncryptionService : IEncryptionService
 		return decryptedBytes;
 	}
 
+	public string EncryptText(string text)
+	{
+		return Convert.ToBase64String(Encrypt(SystemEncoding.UTF8.GetBytes(text)));
+	}
+
+	public string DecryptText(string cipher)
+	{
+		return SystemEncoding.UTF8.GetString(Decrypt(Convert.FromBase64String(cipher)));
+	}
+
 	public void Dispose() => _aes.Dispose();
 }

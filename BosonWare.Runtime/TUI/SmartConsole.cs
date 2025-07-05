@@ -1,8 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text;
-using BosonWare.Compares;
 
-namespace BosonWare;
+namespace BosonWare.TUI;
 
 /// <summary>
 /// Provides thread-safe console operations.
@@ -11,7 +10,7 @@ public static class SmartConsole
 {
     private sealed class ThreadedConsole
     {
-        private bool _isLocked = false;
+        private volatile bool _isLocked = false;
 
         /// <summary>
         /// Locks the console to prevent writing.
@@ -50,13 +49,13 @@ public static class SmartConsole
             if (color is not null) {
                 var previousColor = Console.ForegroundColor;
                 Console.ForegroundColor = color.Value;
-                Console.Write(FormatANSICodes(message));
+                Console.Write(AnsiCodes.ProcessMarkup(message));
                 Console.ForegroundColor = previousColor;
 
                 return;
             }
 
-            Console.Write(FormatANSICodes(DefaultColor + message + "[/]"));
+            Console.Write(AnsiCodes.ProcessMarkup(message));
         }
 
         /// <summary>
@@ -76,24 +75,6 @@ public static class SmartConsole
     }
 
     private static readonly ThreadedConsole _consoleInstance = new();
-
-    public static string DefaultColor { get; set; } = "[/]";
-
-    public static Dictionary<string, string> ANSIColors { get; }
-        = new(new OrdinalIgnoreCaseEqualityComparer()) {
-        { "[BRIGHT]", "\x1b[1m" },
-        { "[DIM]", "\x1b[2m" },
-        { "[GREEN]", "\x1b[32m" },
-        { "[YELLOW]", "\x1b[33m" },
-        { "[RED]", "\x1b[31m" },
-        { "[DARKRED]", "\x1b[31m" },
-        { "[CRIMSON]", "\x1b[31m" },
-        { "[CYAN]", "\x1b[36m" },
-        { "[PURPLE]", "\x1b[38;2;135;2;250m" },
-        { "[MAGENTA]", "\x1b[38;2;238;130;238m" },
-        { "[VIOLET]", "\x1b[38;2;123;104;238m" },
-        { "[/]", "\x1b[0m" },
-    };
 
     /// <summary>
     /// Locks the console to prevent writing.
@@ -120,7 +101,7 @@ public static class SmartConsole
 
     public static async Task WriteLineAnimatedAsync(object? message, int delay = 40)
     {
-        var msg = FormatANSICodes(FormatObjectAsString(message));
+        var msg = AnsiCodes.ProcessMarkup(FormatObjectAsString(message));
 
         foreach (var c in msg.Split(' ',
             StringSplitOptions.RemoveEmptyEntries
@@ -219,7 +200,6 @@ public static class SmartConsole
         return builder.ToString();
     }
 
-
     /// <summary>
     /// Logs an info message to the console.
     /// </summary>
@@ -257,31 +237,6 @@ public static class SmartConsole
         WriteLine(formatted);
     }
 
-    internal static string FormatANSICodes(string message)
-    {
-        foreach (var (key, code) in ANSIColors) {
-            var ANSI = ANSIColors["[/]"] + code;
-
-            if (key == "[/]") {
-                ANSI = ANSIColors[DefaultColor];
-
-                message = message.Replace(key, ANSI, StringComparison.InvariantCultureIgnoreCase) + code;
-
-                continue;
-            }
-
-            message = message.Replace(key, ANSI, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        return message;
-    }
-
-    // TODO: Implement functionality for the 'FormatANSICodesFast' method.
-    internal static string FormatANSICodesFast(string message)
-        => throw new NotImplementedException();
-
     internal static string FormatObjectAsString(object? message)
-    {
-        return message?.ToString() ?? "[Violet]NULL[/]";
-    }
+        => message?.ToString() ?? "[Violet]NULL[/]";
 }

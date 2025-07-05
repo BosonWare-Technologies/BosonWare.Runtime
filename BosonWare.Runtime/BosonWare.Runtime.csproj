@@ -10,7 +10,7 @@
     	<Authors>Realtin (CodingBoson)</Authors>
 	    <Company>BosonWare, Technologies</Company>
 
-      <Version>1.1.0</Version>
+      <Version>1.2.0</Version>
       <Copyright>BosonWare, Technologies</Copyright>
       <PackageLicenseExpression>MIT</PackageLicenseExpression>
       <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -19,17 +19,7 @@
       <RepositoryUrl>https://github.com/BosonWare-Technologies/BosonWare.Runtime</RepositoryUrl>
 
       <PackageReleaseNotes>
-      Refactor encryption services and mark BinaryParser obsolete
-
-      Implements several architectural improvements:
       
-      - Moves IDisposable to IEncryptionService interface
-      - Marks BinaryParser as obsolete in favor of      FastBinaryParser
-      - Adds x86/x64 platform targets to solution
-      - Creates new BosonWare.Runtime.Lab project
-      - Bumps version to 1.1.0 for interface changes
-      
-      Code style improvements to RSAEncryptionService for       better readability
       </PackageReleaseNotes>
 
   </PropertyGroup>
