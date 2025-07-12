@@ -27,7 +27,10 @@ A lightweight .NET cryptography and encoding utility library providing essential
 
 ## Installation
 
-This project targets .NET 8.0.
+This package targets .NET 8.0+.
+```bash
+dotnet add package BosonWare.Runtime
+```
 
 ## Usage Examples
 

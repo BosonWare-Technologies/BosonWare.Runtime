@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace BosonWare.Binary;
 
 /// <summary>
@@ -8,6 +10,7 @@ public static class FastBinaryParser
     public enum ResultType
     {
         Invalid,
+        Int8,
         Int16,
         Int32,
         Int64,
@@ -27,47 +30,44 @@ public static class FastBinaryParser
             Value = value;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public byte AsInt8() => Value[0];
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public short AsInt16() => BitConverter.ToInt16(Value);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int AsInt32() => BitConverter.ToInt32(Value);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long AsInt64() => BitConverter.ToInt64(Value);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public float AsSingle() => BitConverter.ToSingle(Value);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public double AsDouble() => BitConverter.ToDouble(Value);
     }
 
     /// <summary>
-    /// Attempts to parse a span of bytes as a signed integer (16, 32, or 64 bits).
+    /// Attempts to parse a span of bytes as a signed integer (8, 16, 32, or 64 bits).
     /// </summary>
     /// <param name="bytes">The span of bytes to parse.</param>
-    /// <param name="type">
-    /// When this method returns <c>true</c>, contains the type of integer parsed ("int16", "int32", or "int64").
-    /// Otherwise, <c>null</c>.
-    /// </param>
-    /// <param name="value">
-    /// When this method returns <c>true</c>, contains the string representation of the parsed integer value.
-    /// Otherwise, <c>null</c>.
-    /// </param>
+    /// <param name="value">The result</param>
     /// <returns>
-    /// <c>true</c> if the bytes could be parsed as a supported integer type; otherwise, <c>false</c>.
+    /// <c>true</c> if the bytes could be parsed as a 
+    /// supported integer type; otherwise, <c>false</c>.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryParseInteger(ReadOnlySpan<byte> bytes, out Result value)
     {
-        ResultType type;
-        if (bytes.Length == 2) { // Check if the bytes array encodes a 16 bit integer.
-            type = ResultType.Int16;
-        }
-        else if (bytes.Length == 4) { // Check if the bytes array encodes a 32 bit integer.
-            type = ResultType.Int32;
-        }
-        else if (bytes.Length == 8) {  // Check if the bytes array encodes a 64 bit integer.
-            type = ResultType.Int64;
-        }
-        else {
-            type = ResultType.Invalid;
-        }
+        var type = bytes.Length switch {
+            1 => ResultType.Int8,
+            2 => ResultType.Int16,
+            4 => ResultType.Int32,
+            8 => ResultType.Int64,
+            _ => ResultType.Invalid,
+        };
 
         value = new Result(ResultType.Int16, bytes);
 
@@ -78,31 +78,19 @@ public static class FastBinaryParser
     /// Attempts to parse a span of bytes as a floating-point number (single or double precision).
     /// </summary>
     /// <param name="bytes">The span of bytes to parse.</param>
-    /// <param name="type">
-    /// When this method returns <c>true</c>, contains the type of floating-point number parsed ("single" or "double").
-    /// Otherwise, <c>null</c>.
-    /// </param>
-    /// <param name="value">
-    /// When this method returns <c>true</c>, contains the string representation of the parsed floating-point value.
-    /// Otherwise, <c>null</c>.
-    /// </param>
+    /// <param name="value">The result</param>
     /// <returns>
-    /// <c>true</c> if the bytes could be parsed as a supported floating-point type; otherwise, <c>false</c>.
+    /// <c>true</c> if the bytes could be parsed as a 
+    /// supported floating-point type; otherwise, <c>false</c>.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryParseFloat(ReadOnlySpan<byte> bytes, out Result value)
     {
-        ResultType type;
-        if (bytes.Length == 4) // Check if the bytes array encodes a 16 bit integer.
-        {
-            type = ResultType.Single;
-        }
-        else if (bytes.Length == 8) // Check if the bytes array encodes a 32 bit integer.
-        {
-            type = ResultType.Double;
-        }
-        else {
-            type = ResultType.Invalid;
-        }
+        var type = bytes.Length switch {
+            4 => ResultType.Single,
+            8 => ResultType.Double,
+            _ => ResultType.Invalid,
+        };
 
         value = new Result(ResultType.Int16, bytes);
 

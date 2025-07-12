@@ -8,9 +8,9 @@ public sealed class RSAEncryptionService : IEncryptionService
 
 	private RSAEncryptionService(RSA rsa) => this.rsa = rsa;
 
-    public byte[] Encrypt(byte[] data) => rsa.Encrypt(data, RSAEncryptionPadding.OaepSHA256);
+	public byte[] Encrypt(byte[] data) => rsa.Encrypt(data, RSAEncryptionPadding.OaepSHA256);
 
-    public byte[] Decrypt(byte[] data) => rsa.Decrypt(data, RSAEncryptionPadding.OaepSHA256);
+	public byte[] Decrypt(byte[] data) => rsa.Decrypt(data, RSAEncryptionPadding.OaepSHA256);
 
 	public string EncryptText(string text)
 	{
@@ -21,7 +21,7 @@ public sealed class RSAEncryptionService : IEncryptionService
 	{
 		return SystemEncoding.UTF8.GetString(Decrypt(Convert.FromBase64String(cipher)));
 	}
-	
+
 	public void Dispose() => rsa.Dispose();
 
 	public static RSAEncryptionService FromPemKey(ReadOnlySpan<char> pemKey)

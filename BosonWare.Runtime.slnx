@@ -1,0 +1,12 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/examples/">
+    <Project Path="examples/UsageExamples/UsageExamples.csproj" />
+  </Folder>
+  <Project Path="BosonWare.Runtime.Lab/BosonWare.Runtime.Lab.csproj" />
+  <Project Path="BosonWare.Runtime/BosonWare.Runtime.csproj" />
+</Solution>
