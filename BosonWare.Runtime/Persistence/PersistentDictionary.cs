@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
-namespace BosonWare.Persistance;
+namespace BosonWare.Persistence;
 
 public class PersistentDictionary<TKey, TValue>(string location)
     : PersistentObject<PersistentDictionary<TKey, TValue>>(location), IDictionary<TKey, TValue> where TKey: notnull

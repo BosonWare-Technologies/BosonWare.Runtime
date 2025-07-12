@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using BosonWare.Extensions;
 
-namespace BosonWare.Persistance;
+namespace BosonWare.Persistence;
 
 public abstract class PersistentObject<TSelf>(string location) where TSelf : PersistentObject<TSelf>
 {

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Text.Json.Serialization;
 
-namespace BosonWare.Persistance;
+namespace BosonWare.Persistence;
 
 public class PersistentList<T>(string location) : PersistentObject<PersistentList<T>>(location), IList<T>
 {
