@@ -1,0 +1,281 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BosonWare.Runtime</name>
+    </assembly>
+    <members>
+        <member name="T:BosonWare.Binary.BinaryParser">
+            <summary>
+            Provides methods for parsing binary data into integer and floating-point representations.
+            </summary>
+        </member>
+        <member name="M:BosonWare.Binary.BinaryParser.TryParseInteger(System.ReadOnlySpan{System.Byte},System.String@,System.String@)">
+            <summary>
+            Attempts to parse a span of bytes as a signed integer (16, 32, or 64 bits).
+            </summary>
+            <param name="bytes">The span of bytes to parse.</param>
+            <param name="type">
+            When this method returns <c>true</c>, contains the type of integer parsed ("int16", "int32", or "int64").
+            Otherwise, <c>null</c>.
+            </param>
+            <param name="value">
+            When this method returns <c>true</c>, contains the string representation of the parsed integer value.
+            Otherwise, <c>null</c>.
+            </param>
+            <returns>
+            <c>true</c> if the bytes could be parsed as a supported integer type; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:BosonWare.Binary.BinaryParser.TryParseFloat(System.ReadOnlySpan{System.Byte},System.String@,System.String@)">
+            <summary>
+            Attempts to parse a span of bytes as a floating-point number (single or double precision).
+            </summary>
+            <param name="bytes">The span of bytes to parse.</param>
+            <param name="type">
+            When this method returns <c>true</c>, contains the type of floating-point number parsed ("single" or "double").
+            Otherwise, <c>null</c>.
+            </param>
+            <param name="value">
+            When this method returns <c>true</c>, contains the string representation of the parsed floating-point value.
+            Otherwise, <c>null</c>.
+            </param>
+            <returns>
+            <c>true</c> if the bytes could be parsed as a supported floating-point type; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="T:BosonWare.Binary.FastBinaryParser">
+            <summary>
+            Provides methods for parsing binary data into integer and floating-point representations.
+            </summary>
+        </member>
+        <member name="M:BosonWare.Binary.FastBinaryParser.TryParseInteger(System.ReadOnlySpan{System.Byte},BosonWare.Binary.FastBinaryParser.Result@)">
+            <summary>
+            Attempts to parse a span of bytes as a signed integer (8, 16, 32, or 64 bits).
+            </summary>
+            <param name="bytes">The span of bytes to parse.</param>
+            <param name="value">The result</param>
+            <returns>
+            <c>true</c> if the bytes could be parsed as a 
+            supported integer type; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:BosonWare.Binary.FastBinaryParser.TryParseFloat(System.ReadOnlySpan{System.Byte},BosonWare.Binary.FastBinaryParser.Result@)">
+            <summary>
+            Attempts to parse a span of bytes as a floating-point number (single or double precision).
+            </summary>
+            <param name="bytes">The span of bytes to parse.</param>
+            <param name="value">The result</param>
+            <returns>
+            <c>true</c> if the bytes could be parsed as a 
+            supported floating-point type; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="T:BosonWare.Cryptography.AesEncryptionService">
+            <summary>
+            Provides AES encryption and decryption services using a specified key.
+            </summary>
+        </member>
+        <member name="T:BosonWare.Cryptography.EphemeralKeys">
+            <summary>
+            Provides methods for generating, retrieving, and managing ephemeral cryptographic keys in memory.
+            </summary>
+            <remarks>
+            Ephemeral keys are short-lived keys intended for temporary use, such as session keys or non-persistent secrets.
+            This class uses a thread-safe dictionary to store and retrieve keys by name, generating new keys as needed.
+            </remarks>
+        </member>
+        <member name="M:BosonWare.Cryptography.EphemeralKeys.Get(System.String,System.Int32)">
+            <summary>
+            Gets an ephemeral key from the store with the specified <paramref name="keyName"/>. 
+            If no key is found a new one is generated.
+            </summary>
+            <param name="keyName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BosonWare.Cryptography.EphemeralKeys.New(System.String,System.Int32)">
+            <summary>
+            Generates a new ephemeral key.
+            </summary>
+            <param name="keyName"></param>
+        </member>
+        <member name="M:BosonWare.Cryptography.KeyUtility.ComputeKey(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            Uses PBKDF2 to derive a 256-bit key from the salt and password
+            </summary>
+            <param name="salt"></param>
+            <param name="password"></param>
+            <param name="iterations"></param>
+            <param name="derivedKeyLength"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BosonWare.Cryptography.KeyUtility.ComputeKey(System.ReadOnlySpan{System.Byte},System.ReadOnlySpan{System.Byte},System.Int32,System.Int32)">
+            <summary>
+            Uses PBKDF2 to derive a 256-bit key from the salt and password
+            </summary>
+            <param name="salt"></param>
+            <param name="password"></param>
+            <param name="iterations"></param>
+            <param name="derivedKeyLength"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BosonWare.Cryptography.KeyUtility.ComputeKey(System.ReadOnlySpan{System.Byte},System.ReadOnlySpan{System.Byte},System.Span{System.Byte},System.Int32)">
+            <summary>
+            Uses PBKDF2 to derive a 256-bit key from the salt and password
+            </summary>
+            <param name="salt"></param>
+            <param name="password"></param>
+            <param name="iterations"></param>
+            <param name="derivedKeyLength"></param>
+            <returns></returns>
+        </member>
+        <member name="T:BosonWare.Cryptography.SignatureUtility">
+            <summary>
+            Provides utility methods for creating and verifying digital signatures using RSA cryptography.
+            </summary>
+        </member>
+        <member name="M:BosonWare.Cryptography.SignatureUtility.CreateToken(System.ReadOnlySpan{System.Char},System.String)">
+            <summary>
+            Creates a digital signature (token) for the specified message using the provided RSA private key in PEM format.
+            </summary>
+            <param name="privateKey">The RSA private key in PEM format as a read-only character span.</param>
+            <param name="message">The message to sign. Defaults to "Hello" if not specified.</param>
+            <returns>A Base64-encoded string representing the digital signature of the message.</returns>
+        </member>
+        <member name="M:BosonWare.Cryptography.SignatureUtility.CheckSignature(System.String,System.ReadOnlySpan{System.Char},System.String)">
+            <summary>
+            Verifies the digital signature (token) of a message using the provided RSA public key in PEM format.
+            </summary>
+            <param name="token">The Base64-encoded digital signature to verify.</param>
+            <param name="publicKey">The RSA public key in PEM format as a read-only character span.</param>
+            <param name="message">The original message that was signed. Defaults to "Hello" if not specified.</param>
+            <returns><c>true</c> if the signature is valid for the given message and public key; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="T:BosonWare.TUI.SmartConsole">
+            <summary>
+            Provides thread-safe console operations.
+            </summary>
+        </member>
+        <member name="M:BosonWare.TUI.SmartConsole.ThreadedConsole.Lock">
+            <summary>
+            Locks the console to prevent writing.
+            </summary>
+        </member>
+        <member name="M:BosonWare.TUI.SmartConsole.ThreadedConsole.Unlock">
+            <summary>
+            Unlocks the console to allow writing.
+            </summary>
+        </member>
+        <member name="M:BosonWare.TUI.SmartConsole.ThreadedConsole.WriteLine(System.String,System.Nullable{System.ConsoleColor})">
+            <summary>
+            Writes a line to the console with the specified color.
+            </summary>
+            <param name="message">The message to write.</param>
+            <param name="color">The color of the message.</param>
+        </member>
+        <member name="M:BosonWare.TUI.SmartConsole.ThreadedConsole.Write(System.String,System.Nullable{System.ConsoleColor})">
+            <summary>
+            Writes a message to the console with the specified color.
+            </summary>
+            <param name="message">The message to write.</param>
+            <param name="color">The color of the message.</param>
+        </member>
+        <member name="M:BosonWare.TUI.SmartConsole.ThreadedConsole.ReadLine(System.String,System.Nullable{System.ConsoleColor})">
+            <summary>
+            Reads a line from the console with a prompt and the specified color.
+            </summary>
+            <param name="prompt">The prompt to display.</param>
+            <param name="color">The color of the prompt.</param>
+            <returns>The input from the console.</returns>
+        </member>
+        <member name="M:BosonWare.TUI.SmartConsole.Lock">
+            <summary>
+            Locks the console to prevent writing.
+            </summary>
+        </member>
+        <member name="M:BosonWare.TUI.SmartConsole.Unlock">
+            <summary>
+            Unlocks the console to allow writing.
+            </summary>
+        </member>
+        <member name="M:BosonWare.TUI.SmartConsole.WriteLine(System.Object,System.Nullable{System.ConsoleColor})">
+            <summary>
+            Writes a line to the console with the specified color.
+            </summary>
+            <param name="message">The message to write.</param>
+            <param name="color">The color of the message.</param>
+        </member>
+        <member name="M:BosonWare.TUI.SmartConsole.Write(System.Object,System.Nullable{System.ConsoleColor})">
+            <summary>
+            Writes a message to the console with the specified color.
+            </summary>
+            <param name="message">The message to write.</param>
+            <param name="color">The color of the message.</param>
+        </member>
+        <member name="M:BosonWare.TUI.SmartConsole.ReadLine(System.String,System.Nullable{System.ConsoleColor})">
+            <summary>
+            Reads a line from the console with a prompt and the specified color.
+            </summary>
+            <param name="prompt">The prompt to display.</param>
+            <param name="color">The color of the prompt.</param>
+            <returns>The input from the console.</returns>
+        </member>
+        <member name="M:BosonWare.TUI.SmartConsole.LogInfo(System.Object)">
+            <summary>
+            Logs an info message to the console.
+            </summary>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:BosonWare.TUI.SmartConsole.LogWarning(System.Object)">
+            <summary>
+            Logs a warning message to the console.
+            </summary>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:BosonWare.TUI.SmartConsole.LogError(System.Object)">
+            <summary>
+            Logs an error message to the console.
+            </summary>
+            <param name="message">The message to log.</param>
+        </member>
+        <member name="M:BosonWare.TUI.SmartConsole.Log(System.String,System.Object,System.ConsoleColor)">
+            <summary>
+            Logs a message to the console with the specified type and color.
+            </summary>
+            <param name="type">The type of the message.</param>
+            <param name="message">The message to log.</param>
+            <param name="color">The color of the message.</param>
+        </member>
+        <member name="T:BosonWare.TUI.TUIConsole">
+            <summary>
+            Provides utility methods for writing to and reading from the console with markup processing and input history support.
+            </summary>
+        </member>
+        <member name="M:BosonWare.TUI.TUIConsole.Write(System.String)">
+            <summary>
+            Writes the specified markup text to the console without a newline, processing any markup codes.
+            </summary>
+            <param name="markupText">The text containing markup to write to the console.</param>
+        </member>
+        <member name="M:BosonWare.TUI.TUIConsole.WriteLine(System.String)">
+            <summary>
+            Writes the specified markup text to the console followed by a newline, processing any markup codes.
+            </summary>
+            <param name="markupText">The text containing markup to write to the console.</param>
+        </member>
+        <member name="M:BosonWare.TUI.TUIConsole.ProcessMarkup(System.String)">
+            <summary>
+            Processes the given text, converting markup codes to their corresponding ANSI escape sequences.
+            </summary>
+            <param name="txt">The text containing markup codes.</param>
+            <returns>The processed string with ANSI escape sequences.</returns>
+        </member>
+        <member name="M:BosonWare.TUI.TUIConsole.ReadLineWithHistory(System.String,System.Collections.Generic.IList{System.String})">
+            <summary>
+            Reads a line of input from the console with support for input history navigation and markup in the prompt.
+            </summary>
+            <param name="prompt">The prompt to display, which may contain markup codes.</param>
+            <param name="history">A list of previous input strings for history navigation.</param>
+            <returns>The line of input entered by the user.</returns>
+        </member>
+    </members>
+</doc>

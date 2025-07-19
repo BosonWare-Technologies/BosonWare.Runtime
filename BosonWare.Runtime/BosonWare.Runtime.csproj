@@ -6,11 +6,12 @@
     <Nullable>enable</Nullable>
 	  <LangVersion>preview</LangVersion>
     <RootNamespace>BosonWare</RootNamespace>
+    <DocumentationFile>BosonWare.Runtime.xml</DocumentationFile>
 
     	<Authors>Realtin (CodingBoson)</Authors>
 	    <Company>BosonWare, Technologies</Company>
 
-      <Version>2.0.1</Version>
+      <Version>2.1.0</Version>
       <Copyright>BosonWare, Technologies</Copyright>
       <PackageLicenseExpression>MIT</PackageLicenseExpression>
       <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -23,7 +24,7 @@
       </RepositoryUrl>
 
       <PackageReleaseNotes>
-      Fix Typo 🤣
+        
       </PackageReleaseNotes>
 
   </PropertyGroup>
@@ -34,6 +35,12 @@
 
   <ItemGroup>
     <Folder Include="Persistence/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\README.md">
+      <Link>README.md</Link>
+    </Content>
   </ItemGroup>
 
 </Project>
