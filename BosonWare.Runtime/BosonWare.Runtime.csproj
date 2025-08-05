@@ -11,7 +11,7 @@
     	<Authors>Realtin (CodingBoson)</Authors>
 	    <Company>BosonWare, Technologies</Company>
 
-      <Version>2.1.0</Version>
+      <Version>2.2.0</Version>
       <Copyright>BosonWare, Technologies</Copyright>
       <PackageLicenseExpression>MIT</PackageLicenseExpression>
       <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -24,13 +24,25 @@
       </RepositoryUrl>
 
       <PackageReleaseNotes>
+        Features
+         - Added Cache (See CACHE.README.md for more info)
         
+        Improved the `Application` class
+        Added More documentation
       </PackageReleaseNotes>
 
   </PropertyGroup>
 
   <ItemGroup>
       <None Include="../README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="APPLICATION.README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="CACHE.README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

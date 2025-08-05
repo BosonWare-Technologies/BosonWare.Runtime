@@ -31,30 +31,33 @@ public static class AnsiCodes
             return message;
 
         var builder = new StringBuilder();
-        int i = 0;
+        var i = 0;
         while (i < message.Length) {
-            if (message[i] == '\\' && i + 1 < message.Length && (message[i + 1] == '[' || message[i + 1] == ']')) {
-                // Escaped bracket
-                builder.Append(message[i + 1]);
-                i += 2;
-            }
-            else if (message[i] == '[') {
-                int end = message.IndexOf(']', i + 1);
-                if (end > i + 1) {
-                    var codeName = message.AsSpan(i + 1, end - i - 1);
-                    if (TryGetAnsiCode(codeName, out var ansiCode)) {
-                        builder.Append(ansiCode.Code);
-                        i = end + 1;
-                        continue;
+            switch (message[i]) {
+                case '\\' when i + 1 < message.Length && (message[i + 1] == '[' || message[i + 1] == ']'):
+                    // Escaped bracket
+                    builder.Append(message[i + 1]);
+                    i += 2;
+                    break;
+                case '[': {
+                    var end = message.IndexOf(']', i + 1);
+                    if (end > i + 1) {
+                        var codeName = message.AsSpan(i + 1, end - i - 1);
+                        if (TryGetAnsiCode(codeName, out var ansiCode)) {
+                            builder.Append(ansiCode.Code);
+                            i = end + 1;
+                            continue;
+                        }
                     }
+                    // Not a valid code, treat as normal char
+                    builder.Append('[');
+                    i++;
+                    break;
                 }
-                // Not a valid code, treat as normal char
-                builder.Append('[');
-                i++;
-            }
-            else {
-                builder.Append(message[i]);
-                i++;
+                default:
+                    builder.Append(message[i]);
+                    i++;
+                    break;
             }
         }
         return builder.ToString();
@@ -63,10 +66,11 @@ public static class AnsiCodes
     public static bool TryGetAnsiCode(ReadOnlySpan<char> name, out AnsiCode code)
     {
         foreach (var ansiCode in Codes) {
-            if (ansiCode.Human.AsSpan().Equals(name, StringComparison.OrdinalIgnoreCase)) {
-                code = ansiCode;
-                return true;
-            }
+            if (!ansiCode.Human.AsSpan().Equals(name, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            code = ansiCode;
+            return true;
         }
         code = default;
         return false;
