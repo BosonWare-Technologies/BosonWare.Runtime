@@ -4,6 +4,7 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Folder Name="/docs/" />
   <Folder Name="/examples/">
     <Project Path="examples/UsageExamples/UsageExamples.csproj" />
   </Folder>
