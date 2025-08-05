@@ -4,6 +4,153 @@
         <name>BosonWare.Runtime</name>
     </assembly>
     <members>
+        <member name="T:BosonWare.Application">
+            <summary>
+            Provides centralized application configuration and path management functionality.
+            This static class automatically manages application metadata, versioning, and file system paths
+            based on assembly-level <see cref="T:BosonWare.ApplicationAttribute"/> configuration.
+            </summary>
+            <remarks>
+            The Application class uses lazy initialization for optimal performance and supports
+            environment variable overrides for deployment flexibility. All path operations
+            automatically create necessary directories.
+            </remarks>
+        </member>
+        <member name="P:BosonWare.Application.Version">
+            <summary>
+            Gets the parsed version of the application.
+            Initialized from the <see cref="P:BosonWare.ApplicationAttribute.Version"/> property during <see cref="M:BosonWare.Application.Initialize``1"/>.
+            </summary>
+            <value>A <see cref="P:BosonWare.Application.Version"/> object representing the application version</value>
+        </member>
+        <member name="P:BosonWare.Application.PrettyName">
+            <summary>
+            Gets the human-readable name of the application.
+            Lazily loaded from <see cref="P:BosonWare.ApplicationAttribute.Name"/> or falls back to <see cref="P:System.AppDomain.FriendlyName"/>.
+            </summary>
+            <value>The application's display name</value>
+        </member>
+        <member name="P:BosonWare.Application.UnixFolderName">
+            <summary>
+            Gets the Unix-style folder name for the application data directory.
+            Automatically prefixes the <see cref="P:BosonWare.Application.PrettyName"/> with a dot for hidden directory convention.
+            </summary>
+            <value>A string in the format ".ApplicationName"</value>
+        </member>
+        <member name="P:BosonWare.Application.DataPath">
+            <summary>
+            Gets the full path to the application's data directory.
+            Combines the base folder from <see cref="P:BosonWare.ApplicationAttribute.Folder"/> with <see cref="P:BosonWare.Application.UnixFolderName"/>.
+            Can be overridden using the APPLICATION_PATH environment variable.
+            </summary>
+            <value>The absolute path to the application's data directory</value>
+        </member>
+        <member name="M:BosonWare.Application.Initialize``1">
+            <summary>
+            Initializes the application configuration by reading the <see cref="T:BosonWare.ApplicationAttribute"/> 
+            from the specified assembly. This method should be called once during application startup.
+            </summary>
+            <typeparam name="TAssemblyMarker">A type from the assembly containing the ApplicationAttribute</typeparam>
+            <remarks>
+            If no <see cref="T:BosonWare.ApplicationAttribute"/> is found, the application will use default values.
+            This method is safe to call multiple times but should typically be called once in Main().
+            </remarks>
+            <example>
+            <code>
+            // In your main method
+            Application.Initialize&lt;Program&gt;();
+            </code>
+            </example>
+        </member>
+        <member name="M:BosonWare.Application.GetPath(System.String[])">
+            <summary>
+            Gets the full path to a file within the application data directory.
+            Automatically creates any intermediate directories that don't exist.
+            </summary>
+            <param name="relativePaths">Variable number of path segments relative to the application data directory</param>
+            <returns>The complete file path as a string</returns>
+            <exception cref="T:System.ArgumentException">Thrown when path segments contain invalid characters</exception>
+            <exception cref="T:System.IO.DirectoryNotFoundException">Thrown when unable to create intermediate directories</exception>
+            <example>
+            <code>
+            string configPath = Application.GetPath("config", "settings.json");
+            // Returns: /home/user/.MyApp/config/settings.json
+            </code>
+            </example>
+        </member>
+        <member name="M:BosonWare.Application.GetDirectory(System.String[])">
+            <summary>
+            Gets the full path to a directory within the application data directory.
+            Automatically creates the directory and any intermediate directories if they don't exist.
+            </summary>
+            <param name="relativePaths">Variable number of path segments relative to the application data directory</param>
+            <returns>The complete directory path as a string</returns>
+            <exception cref="T:System.ArgumentException">Thrown when path segments contain invalid characters</exception>
+            <exception cref="T:System.UnauthorizedAccessException">Thrown when lacking permissions to create directories</exception>
+            <example>
+            <code>
+            string logsDir = Application.GetDirectory("logs", "2024");
+            // Returns: /home/user/.MyApp/logs/2024/ (and creates the directory)
+            </code>
+            </example>
+        </member>
+        <member name="M:BosonWare.Application.GetAppFolder(System.Environment.SpecialFolder)">
+            <summary>
+            Determines the application's data folder path based on the specified special folder.
+            Supports environment variable override via APPLICATION_PATH.
+            </summary>
+            <param name="folder">The base special folder to use for the application data</param>
+            <returns>The full path to the application's data folder</returns>
+            <remarks>
+            If the APPLICATION_PATH environment variable is set and not empty, it will be used
+            instead of the computed path based on the special folder.
+            </remarks>
+        </member>
+        <member name="T:BosonWare.ApplicationAttribute">
+            <summary>
+            Defines application metadata at the assembly level for automatic configuration of the Application class.
+            Use this attribute to specify the application name, version, and data folder location.
+            </summary>
+            <param name="name">The human-readable name of the application</param>
+            <example>
+            <code>
+            [assembly: Application("MyApp", Folder = SpecialFolder.ApplicationData, Version = "2.1.0")]
+            </code>
+            </example>
+        </member>
+        <member name="M:BosonWare.ApplicationAttribute.#ctor(System.String)">
+            <summary>
+            Defines application metadata at the assembly level for automatic configuration of the Application class.
+            Use this attribute to specify the application name, version, and data folder location.
+            </summary>
+            <param name="name">The human-readable name of the application</param>
+            <example>
+            <code>
+            [assembly: Application("MyApp", Folder = SpecialFolder.ApplicationData, Version = "2.1.0")]
+            </code>
+            </example>
+        </member>
+        <member name="P:BosonWare.ApplicationAttribute.Name">
+            <summary>
+            Gets or sets the human-readable display name of the application.
+            This name is used for directory creation and display purposes.
+            </summary>
+            <value>The application's display name</value>
+        </member>
+        <member name="P:BosonWare.ApplicationAttribute.Folder">
+            <summary>
+            Gets or sets the base system folder where application data will be stored.
+            Defaults to the user's profile directory if not specified.
+            </summary>
+            <value>A <see cref="T:System.Environment.SpecialFolder"/> enumeration value specifying the base location</value>
+        </member>
+        <member name="P:BosonWare.ApplicationAttribute.Version">
+            <summary>
+            Gets or sets the version string of the application.
+            Must be a valid version format parseable by <see cref="M:System.Version.Parse(System.String)"/>.
+            </summary>
+            <value>A version string in the format "major.minor.build" or similar</value>
+        </member>
         <member name="T:BosonWare.Binary.BinaryParser">
             <summary>
             Provides methods for parsing binary data into integer and floating-point representations.
@@ -69,6 +216,220 @@
             <c>true</c> if the bytes could be parsed as a 
             supported floating-point type; otherwise, <c>false</c>.
             </returns>
+        </member>
+        <member name="T:BosonWare.Cache`1">
+            <summary>
+            Provides a generic, thread-safe, time-based caching mechanism for expensive operations.
+            Each generic type T maintains its own separate cache instance for type safety and isolation.
+            </summary>
+            <typeparam name="T">The type of values to cache</typeparam>
+            <remarks>
+            <para>
+            The Cache&lt;T&gt; class uses ConcurrentDictionary for thread-safe operations and aggressive
+            method inlining for optimal performance. Values are automatically expired based on time duration,
+            and the cache supports both synchronous and asynchronous value factories.
+            </para>
+            <para>
+            Each generic type maintains a completely separate cache instance, ensuring type safety
+            and preventing interference between different cached data types.
+            </para>
+            <para>
+            The cache does not implement background cleanup; expired entries are removed lazily
+            when accessed or overwritten. For long-running applications, consider periodic
+            manual cleanup using <see cref="M:BosonWare.Cache`1.Clear"/> if memory usage becomes a concern.
+            </para>
+            </remarks>
+            <example>
+            <code>
+            // Cache expensive API calls
+            var data = await Cache&lt;ApiResponse&gt;.GetAsync(
+                "api_key",
+                async () => await httpClient.GetFromJsonAsync&lt;ApiResponse&gt;(url),
+                TimeSpan.FromMinutes(5)
+            );
+            
+            // Cache database queries
+            var users = Cache&lt;List&lt;User&gt;&gt;.Get(
+                "active_users",
+                () => database.GetActiveUsers(),
+                TimeSpan.FromMinutes(2)
+            );
+            </code>
+            </example>
+        </member>
+        <member name="F:BosonWare.Cache`1.CachedValues">
+            <summary>
+            Thread-safe dictionary storing cached values with their creation timestamps.
+            Uses ConcurrentDictionary to ensure safe multi-threaded access without explicit locking.
+            </summary>
+        </member>
+        <member name="M:BosonWare.Cache`1.Clear">
+            <summary>
+            Removes all cached values for the current type T.
+            This operation is atomic and thread-safe.
+            </summary>
+            <remarks>
+            This method clears only the cache for the specific generic type T.
+            Other Cache&lt;U&gt; instances with different types remain unaffected.
+            </remarks>
+            <example>
+            <code>
+            Cache&lt;string&gt;.Clear(); // Clears only string cache
+            Cache&lt;int&gt;.Clear();    // Clears only int cache (separate instance)
+            </code>
+            </example>
+        </member>
+        <member name="M:BosonWare.Cache`1.Remove(System.Object)">
+            <summary>
+            Removes a specific cached value identified by the given key.
+            Safe to call even if the key doesn't exist in the cache.
+            </summary>
+            <param name="key">The key identifying the cached value to remove</param>
+            <remarks>
+            This method performs no operation if the specified key is not found in the cache.
+            The operation is thread-safe and atomic.
+            </remarks>
+            <example>
+            <code>
+            Cache&lt;UserData&gt;.Remove("user123");
+            Cache&lt;UserData&gt;.Remove($"user_{userId}");
+            </code>
+            </example>
+        </member>
+        <member name="M:BosonWare.Cache`1.Get(System.Object,System.Func{`0},System.TimeSpan,System.Boolean)">
+            <summary>
+            Retrieves a cached value or computes it using the provided factory function.
+            Values are cached for the specified duration and automatically expire.
+            </summary>
+            <param name="key">Unique identifier for the cached value. Must not be null.</param>
+            <param name="getter">Factory function to compute the value if not cached or expired. Must not be null.</param>
+            <param name="duration">How long the value should remain valid in the cache</param>
+            <param name="shortCircuit">If true, bypasses the cache entirely and always calls the getter function</param>
+            <returns>The cached value if valid and not expired, otherwise the result of calling the getter function</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="key"/> or <paramref name="getter"/> is null</exception>
+            <remarks>
+            <para>
+            If the key doesn't exist in the cache or the cached value has expired, the getter function
+            is called to compute a new value, which is then stored in the cache with the current timestamp.
+            </para>
+            <para>
+            The shortCircuit parameter is useful for testing scenarios where you want to bypass
+            caching behavior or during development when you need fresh data on every call.
+            </para>
+            <para>
+            Time comparison uses DateTime.Now.TimeOfDay, which resets at midnight. For caches with
+            durations longer than 24 hours in long-running applications, consider the implications
+            of this time reset.
+            </para>
+            </remarks>
+            <example>
+            <code>
+            // Cache expensive computation for 15 minutes
+            var result = Cache&lt;ComplexData&gt;.Get(
+                "computation_key",
+                () => PerformExpensiveCalculation(),
+                TimeSpan.FromMinutes(15)
+            );
+            
+            // Bypass cache during development
+            var devData = Cache&lt;TestData&gt;.Get(
+                "test_key",
+                () => GenerateTestData(),
+                TimeSpan.FromMinutes(5),
+                shortCircuit: isDevelopmentMode
+            );
+            </code>
+            </example>
+        </member>
+        <member name="M:BosonWare.Cache`1.GetAsync(System.Object,System.Func{System.Threading.Tasks.Task{`0}},System.TimeSpan,System.Boolean)">
+            <summary>
+            Asynchronously retrieves a cached value or computes it using the provided async factory function.
+            Values are cached for the specified duration and automatically expire.
+            </summary>
+            <param name="key">Unique identifier for the cached value. Must not be null.</param>
+            <param name="getter">Async factory function to compute the value if not cached or expired. Must not be null.</param>
+            <param name="duration">How long the value should remain valid in the cache</param>
+            <param name="shortCircuit">If true, bypasses the cache entirely and always calls the getter function</param>
+            <returns>A task containing the cached value if valid and not expired, otherwise the result of awaiting the getter function</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when <paramref name="key"/> or <paramref name="getter"/> is null</exception>
+            <remarks>
+            <para>
+            This method provides the same caching behavior as <see cref="M:BosonWare.Cache`1.Get(System.Object,System.Func{`0},System.TimeSpan,System.Boolean)"/> but supports
+            asynchronous value factories. The cache lookup itself is synchronous, but value
+            computation can be async when needed.
+            </para>
+            <para>
+            If the async getter function throws an exception, the exception is not cached
+            and will propagate to the caller. Subsequent calls with the same key will retry
+            the async operation.
+            </para>
+            <para>
+            The method is thread-safe, but be aware that multiple concurrent calls with the same
+            key might result in multiple executions of the getter function if they occur before
+            the first result is cached.
+            </para>
+            </remarks>
+            <example>
+            <code>
+            // Cache API responses for 5 minutes
+            var apiData = await Cache&lt;ApiResponse&gt;.GetAsync(
+                $"api_{endpoint}_{parameters.GetHashCode()}",
+                async () => await httpClient.GetFromJsonAsync&lt;ApiResponse&gt;(url),
+                TimeSpan.FromMinutes(5)
+            );
+            
+            // Cache database query results
+            var users = await Cache&lt;List&lt;User&gt;&gt;.GetAsync(
+                "active_users",
+                async () => await dbContext.Users.Where(u => u.IsActive).ToListAsync(),
+                TimeSpan.FromMinutes(2)
+            );
+            </code>
+            </example>
+        </member>
+        <member name="T:BosonWare.Cache`1.CachedValue">
+            <summary>
+            Immutable structure that stores a cached value along with its creation timestamp.
+            Used internally by the Cache&lt;T&gt; class to track value expiration.
+            </summary>
+            <param name="value">The cached value of type T</param>
+            <param name="lastTime">The time-of-day when this value was created and cached</param>
+            <remarks>
+            This readonly struct ensures thread-safe access to cached values and their timestamps.
+            The structure is immutable after construction, preventing accidental modification
+            that could affect cache consistency.
+            </remarks>
+        </member>
+        <member name="M:BosonWare.Cache`1.CachedValue.#ctor(`0,System.TimeSpan)">
+            <summary>
+            Immutable structure that stores a cached value along with its creation timestamp.
+            Used internally by the Cache&lt;T&gt; class to track value expiration.
+            </summary>
+            <param name="value">The cached value of type T</param>
+            <param name="lastTime">The time-of-day when this value was created and cached</param>
+            <remarks>
+            This readonly struct ensures thread-safe access to cached values and their timestamps.
+            The structure is immutable after construction, preventing accidental modification
+            that could affect cache consistency.
+            </remarks>
+        </member>
+        <member name="P:BosonWare.Cache`1.CachedValue.Value">
+            <summary>
+            Gets the cached value of the generic type T.
+            This value is immutable after the CachedValue instance is created.
+            </summary>
+            <value>The original value that was computed and cached</value>
+        </member>
+        <member name="P:BosonWare.Cache`1.CachedValue.TimeCreated">
+            <summary>
+            Gets the time-of-day when this value was created and stored in the cache.
+            Used for expiration calculations by comparing against the current time-of-day.
+            </summary>
+            <value>A TimeSpan representing the time within the day (00:00:00 to 23:59:59)</value>
+            <remarks>
+            Note that TimeOfDay resets at midnight, so cache durations longer than 24 hours
+            in long-running applications should consider this behavior.
+            </remarks>
         </member>
         <member name="T:BosonWare.Cryptography.AesEncryptionService">
             <summary>

@@ -110,9 +110,9 @@ public static class Cache<T>
     /// caching behavior or during development when you need fresh data on every call.
     /// </para>
     /// <para>
-    /// Time comparison uses DateTime.Now.TimeOfDay, which resets at midnight. For caches with
-    /// durations longer than 24 hours in long-running applications, consider the implications
-    /// of this time reset.
+    /// Time comparison uses DateTime.UtcNow.Ticks for precise, timezone-independent timing.
+    /// This eliminates issues with midnight resets and daylight saving time changes,
+    /// making the cache suitable for long-running applications with any cache duration.
     /// </para>
     /// </remarks>
     /// <example>
@@ -144,20 +144,21 @@ public static class Cache<T>
         if (!CachedValues.TryGetValue(key, out var cachedValue)) {
             var instantValue = getter();
 
-            cachedValue = new CachedValue(instantValue, DateTime.Now.TimeOfDay);
+            cachedValue = new CachedValue(instantValue!, DateTime.UtcNow.Ticks);
 
             CachedValues.TryAdd(key, cachedValue);
 
             return instantValue;
         }
 
-        var now = DateTime.Now;
+        var utcNow = DateTime.UtcNow;
 
-        if (now.TimeOfDay - cachedValue.TimeCreated < duration) return cachedValue.Value;
+        if (TimeSpan.FromTicks(utcNow.Ticks - cachedValue.Timestamp) <= duration) 
+            return cachedValue.Value;
 
         var value = getter();
 
-        CachedValues[key] = new CachedValue(value!, DateTime.Now.TimeOfDay);
+        CachedValues[key] = new CachedValue(value!, DateTime.UtcNow.Ticks);
 
         return value;
     }
@@ -221,20 +222,21 @@ public static class Cache<T>
         if (!CachedValues.TryGetValue(key, out var cachedValue)) {
             var instantValue = await getter();
 
-            cachedValue = new CachedValue(instantValue!, DateTime.Now.TimeOfDay);
+            cachedValue = new CachedValue(instantValue!, DateTime.UtcNow.Ticks);
 
             CachedValues.TryAdd(key, cachedValue);
 
             return instantValue;
         }
 
-        var now = DateTime.Now;
+        var utcNow = DateTime.UtcNow;
 
-        if (now.TimeOfDay - cachedValue.TimeCreated <= duration) return cachedValue.Value;
+        if (TimeSpan.FromTicks(utcNow.Ticks - cachedValue.Timestamp) <= duration) 
+            return cachedValue.Value;
 
         var value = await getter();
 
-        CachedValues[key] = new CachedValue(value!, DateTime.Now.TimeOfDay);
+        CachedValues[key] = new CachedValue(value!, DateTime.UtcNow.Ticks);
 
         return value;
     }
@@ -244,13 +246,13 @@ public static class Cache<T>
     /// Used internally by the Cache&lt;T&gt; class to track value expiration.
     /// </summary>
     /// <param name="value">The cached value of type T</param>
-    /// <param name="lastTime">The time-of-day when this value was created and cached</param>
+    /// <param name="timestamp">The UTC timestamp in ticks when this value was created and cached</param>
     /// <remarks>
     /// This readonly struct ensures thread-safe access to cached values and their timestamps.
     /// The structure is immutable after construction, preventing accidental modification
     /// that could affect cache consistency.
     /// </remarks>
-    private readonly struct CachedValue(T value, TimeSpan lastTime)
+    private readonly struct CachedValue(T value, long timestamp)
     {
         /// <summary>
         /// Gets the cached value of the generic type T.
@@ -260,14 +262,15 @@ public static class Cache<T>
         public T Value { get; } = value;
 
         /// <summary>
-        /// Gets the time-of-day when this value was created and stored in the cache.
-        /// Used for expiration calculations by comparing against the current time-of-day.
+        /// Gets the UTC timestamp in ticks when this value was created and stored in the cache.
+        /// Used for expiration calculations by comparing against the current UTC time.
         /// </summary>
-        /// <value>A TimeSpan representing the time within the day (00:00:00 to 23:59:59)</value>
+        /// <value>A long representing the UTC timestamp in ticks since January 1, 0001</value>
         /// <remarks>
-        /// Note that TimeOfDay resets at midnight, so cache durations longer than 24 hours
-        /// in long-running applications should consider this behavior.
+        /// Using UTC ticks provides precise, timezone-independent timing that doesn't suffer
+        /// from midnight resets or daylight saving time changes, making it suitable for
+        /// long-running applications with cache durations exceeding 24 hours.
         /// </remarks>
-        public TimeSpan TimeCreated { get; } = lastTime;
+        public long Timestamp { get; } = timestamp;
     }
 }
