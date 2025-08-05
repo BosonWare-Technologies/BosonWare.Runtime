@@ -17,7 +17,7 @@ The `BosonWare.Cache<T>` class provides a generic, thread-safe, time-based cachi
 - **Generic static class**: Type-specific caching with compile-time type safety
 - **Method inlining**: Aggressive inlining for optimal performance in hot paths
 - **Immutable value objects**: `CachedValue` struct ensures thread-safe value storage
-- **Time-of-day tracking**: Uses `DateTime.Now.TimeOfDay` for efficient time comparisons
+- **Time tracking**: Uses `DateTime.UtcNow.Ticks` for efficient time comparisons
 - **Defensive programming**: Null argument validation and safe dictionary operations
 
 ### Flow Summary
@@ -123,10 +123,10 @@ An immutable readonly struct that stores cached values along with their creation
 
 #### Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `Value` | `T` | The cached value of the generic type |
-| `TimeCreated` | `TimeSpan` | The time-of-day when this value was cached |
+| Property    | Type   | Description                          |
+|-------------|--------|--------------------------------------|
+| `Value`     | `T`    | The cached value of the generic type |
+| `Timestamp` | `long` | The time when this value was cached  |
 
 ## Usage Patterns
 
@@ -214,6 +214,7 @@ The `Cache<T>` class is fully thread-safe for all operations:
 ## Considerations
 
 - **Memory Growth**: Cache doesn't automatically evict old entries; relies on overwrites
-- **Time Precision**: Uses `TimeOfDay` which resets at midnight (consider for long-running apps)
+- **Time Precision**: Uses `DateTime.UtcNow.Ticks`
 - **Key Equality**: Uses default object equality for keys; ensure proper `GetHashCode()` implementation
 - **Exception Handling**: Exceptions in getter functions are not cached and will propagate
+

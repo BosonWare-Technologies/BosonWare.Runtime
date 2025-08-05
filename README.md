@@ -70,3 +70,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## Author
 
 Developed by CodingBoson at BosonWare, Technologies.
+
+## Release Notes
+- Use `DateTime.UtcNow.Ticks` instead of 'DateTime.Now.TimeOfDay'.
