@@ -21,7 +21,7 @@ namespace BosonWare;
 /// <para>
 /// The cache does not implement background cleanup; expired entries are removed lazily
 /// when accessed or overwritten. For long-running applications, consider periodic
-/// manual cleanup using <see cref="Clear"/> if memory usage becomes a concern.
+/// manual cleanup using <see cref="ClearExpired"/> if memory usage becomes a concern.
 /// </para>
 /// </remarks>
 /// <example>
@@ -41,6 +41,7 @@ namespace BosonWare;
 /// );
 /// </code>
 /// </example>
+[PublicAPI]
 public static class Cache<T>
 {
     /// <summary>
@@ -67,6 +68,30 @@ public static class Cache<T>
     public static void Clear()
     {
         CachedValues.Clear();
+    }
+
+    /// <summary>
+    /// Removes all expired cached values for the current type T.
+    /// This operation is atomic and thread-safe.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// Cache&lt;string&gt;.ClearExpired(); // Clears only string cache
+    /// Cache&lt;int&gt;.ClearExpired();    // Clears only int cache (separate instance)
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void ClearExpired()
+    {
+        var now = DateTime.UtcNow.Ticks;
+        
+        var cachedValues = CachedValues.ToArray();
+        
+        foreach (var (key, cachedValue) in cachedValues) {
+            if (now - cachedValue.Timestamp > cachedValue.Duration) {
+                CachedValues.TryRemove(key, out _);
+            }
+        }
     }
 
     /// <summary>
@@ -144,7 +169,7 @@ public static class Cache<T>
         if (!CachedValues.TryGetValue(key, out var cachedValue)) {
             var instantValue = getter();
 
-            cachedValue = new CachedValue(instantValue!, DateTime.UtcNow.Ticks);
+            cachedValue = new CachedValue(instantValue!, DateTime.UtcNow.Ticks, duration);
 
             CachedValues.TryAdd(key, cachedValue);
 
@@ -158,7 +183,7 @@ public static class Cache<T>
 
         var value = getter();
 
-        CachedValues[key] = new CachedValue(value!, DateTime.UtcNow.Ticks);
+        CachedValues[key] = new CachedValue(value!, DateTime.UtcNow.Ticks, duration);
 
         return value;
     }
@@ -222,7 +247,7 @@ public static class Cache<T>
         if (!CachedValues.TryGetValue(key, out var cachedValue)) {
             var instantValue = await getter();
 
-            cachedValue = new CachedValue(instantValue!, DateTime.UtcNow.Ticks);
+            cachedValue = new CachedValue(instantValue!, DateTime.UtcNow.Ticks, duration);
 
             CachedValues.TryAdd(key, cachedValue);
 
@@ -236,7 +261,7 @@ public static class Cache<T>
 
         var value = await getter();
 
-        CachedValues[key] = new CachedValue(value!, DateTime.UtcNow.Ticks);
+        CachedValues[key] = new CachedValue(value!, DateTime.UtcNow.Ticks, duration);
 
         return value;
     }
@@ -252,7 +277,7 @@ public static class Cache<T>
     /// The structure is immutable after construction, preventing accidental modification
     /// that could affect cache consistency.
     /// </remarks>
-    private readonly struct CachedValue(T value, long timestamp)
+    private readonly struct CachedValue(T value, long timestamp, TimeSpan duration)
     {
         /// <summary>
         /// Gets the cached value of the generic type T.
@@ -272,5 +297,7 @@ public static class Cache<T>
         /// long-running applications with cache durations exceeding 24 hours.
         /// </remarks>
         public long Timestamp { get; } = timestamp;
+
+        public long Duration { get; } = duration.Ticks;
     }
 }

@@ -5,6 +5,7 @@ namespace BosonWare.TUI;
 /// <summary>
 /// Provides utility methods for writing to and reading from the console with markup processing and input history support.
 /// </summary>
+[PublicAPI]
 public static class TUIConsole
 {
     /// <summary>
@@ -43,7 +44,7 @@ public static class TUIConsole
         prompt = ProcessMarkup(prompt);
 
         var buffer = new StringBuilder();
-        int historyIndex = history.Count;
+        var historyIndex = history.Count;
 
         Console.Write(prompt);
 

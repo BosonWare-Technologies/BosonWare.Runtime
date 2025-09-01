@@ -14,6 +14,7 @@ namespace BosonWare;
 /// environment variable overrides for deployment flexibility. All path operations
 /// automatically create necessary directories.
 /// </remarks>
+[PublicAPI]
 public static class Application
 {
     /// <summary>

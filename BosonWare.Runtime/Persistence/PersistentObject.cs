@@ -4,6 +4,7 @@ using BosonWare.Extensions;
 
 namespace BosonWare.Persistence;
 
+[PublicAPI]
 public abstract class PersistentObject<TSelf>(string location) where TSelf : PersistentObject<TSelf>
 {
     public delegate TSelf Constructor(string location);
@@ -32,17 +33,15 @@ public abstract class PersistentObject<TSelf>(string location) where TSelf : Per
 
     public static async Task<TSelf> CreateAsync(string location, Constructor constructor)
     {
-        if (File.Exists(location))
-        {
-            var json = await File.ReadAllTextAsync(location);
+        if (!File.Exists(location))
+            return constructor(location);
 
-            var obj = JsonSerializer.Deserialize<TSelf>(json) ?? constructor(location);
+        var json = await File.ReadAllTextAsync(location);
 
-            obj.Location = location;
+        var obj = JsonSerializer.Deserialize<TSelf>(json) ?? constructor(location);
 
-            return obj;
-        }
+        obj.Location = location;
 
-        return constructor(location);
+        return obj;
     }
 }

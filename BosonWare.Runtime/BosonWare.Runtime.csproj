@@ -11,7 +11,7 @@
     	<Authors>Realtin (CodingBoson)</Authors>
 	    <Company>BosonWare, Technologies</Company>
 
-      <Version>2.2.1</Version>
+      <Version>2.3.0</Version>
       <Copyright>BosonWare, Technologies</Copyright>
       <PackageLicenseExpression>MIT</PackageLicenseExpression>
       <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -23,11 +23,28 @@
       https://github.com/BosonWare-Technologies/BosonWare.Runtime
       </RepositoryUrl>
 
+      <Description>
+        A high-performance .NET runtime library for building applications with advanced caching and persistence capabilities.
+      </Description>
+      <PackageTags>bosonware runtime cache persistence high-performance library</PackageTags>
+
       <PackageReleaseNotes>
-        Improved Cache by using `DateTime.UtcNow.Ticks`
+      Add memory-optimized Base58 encoding implementation
+
+      Introduces a new optimized Base58 encoder/decoder that uses unsafe memory operations for better performance. Implementation includes:
+
+        - Memory-efficient encoding and decoding using UnsafeMemory
+        - Leading zero handling and whitespace trimming
+        - Proper error handling for invalid Base58 data
+
+      Adds supporting JetBrains annotation attributes for better code analysis and documentation.
       </PackageReleaseNotes>
 
   </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="UnmanagedMemory" Version="2.6.1"/>
+  </ItemGroup>
 
   <ItemGroup>
       <None Include="../README.md" Pack="true" PackagePath="\" />

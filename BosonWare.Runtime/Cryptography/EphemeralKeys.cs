@@ -10,6 +10,7 @@ namespace BosonWare.Cryptography;
 /// Ephemeral keys are short-lived keys intended for temporary use, such as session keys or non-persistent secrets.
 /// This class uses a thread-safe dictionary to store and retrieve keys by name, generating new keys as needed.
 /// </remarks>
+[PublicAPI]
 public static class EphemeralKeys
 {
     private static readonly ConcurrentDictionary<string, byte[]> _ephemeralKeys = [];
@@ -39,7 +40,7 @@ public static class EphemeralKeys
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static byte[] New(string keyName, int derivedKeyLength = 32)
     {
-        byte[] ephemeralKey = GenerateKey(derivedKeyLength);
+        var ephemeralKey = GenerateKey(derivedKeyLength);
 
         _ephemeralKeys[keyName] = ephemeralKey;
 

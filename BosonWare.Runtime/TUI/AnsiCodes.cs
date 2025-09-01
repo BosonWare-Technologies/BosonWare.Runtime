@@ -2,12 +2,14 @@ using System.Text;
 
 namespace BosonWare.TUI;
 
+[PublicAPI]
 public readonly struct AnsiCode(string human, string code)
 {
     public readonly string Human = human;
     public readonly string Code = code;
 }
 
+[PublicAPI]
 public static class AnsiCodes
 {
     public static List<AnsiCode> Codes { get; } = [

@@ -1,14 +1,19 @@
 namespace BosonWare.Encoding;
 
+/// <summary>
+///     Base58 encoder and decoder.
+/// </summary>
+[PublicAPI]
 public static class Base58
 {
-    // The base58 characters.
-    private static readonly char[] PszBase58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".ToCharArray();
+    // Base58 character set used for encoding/decoding
+    internal static readonly char[] PszBase58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".ToCharArray();
 
-    private static readonly Dictionary<char, bool> Validator = PszBase58.ToDictionary((x) => x, (x) => true);
+    // Validator dictionary for quick character validation
+    internal static readonly Dictionary<char, bool> Validator = PszBase58.ToDictionary(x => x, x => true);
 
-    private static readonly int[] MapBase58 =
-    [
+    // Mapping from ASCII byte to Base58 index, -1 means invalid character for decoding
+    internal static readonly int[] MapBase58 = [
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -37,112 +42,125 @@ public static class Base58
         -1, -1, -1, -1, -1, -1
     ];
 
-    public static string EncodeData(ReadOnlySpan<byte> data) => EncodeData(data, 0, data.Length);
+    /// <summary>
+    ///     Encodes a byte span into a Base58 string.
+    /// </summary>
+    public static string EncodeData(ReadOnlySpan<byte> data)
+    {
+        return EncodeData(data, 0, data.Length);
+    }
 
+    /// <summary>
+    ///     Encodes a segment of a byte span into Base58 string.
+    /// </summary>
     public static string EncodeData(ReadOnlySpan<byte> data, int offset, int count)
     {
-        int num = 0;
-        int num2 = 0;
+        var zeroCount = 0;
+        var length = 0;
+
+        // Count leading zeros
         while (offset != count && data[offset] == 0) {
             offset++;
-            num++;
+            zeroCount++;
         }
 
-        int num3 = (count - offset) * 138 / 100 + 1;
-        byte[] array = new byte[num3];
+        // Approximate size for base58 representation
+        var size = (count - offset) * 138 / 100 + 1;
+        var buffer = new byte[size];
 
+        // Convert bytes to Base58
         while (offset != count) {
-            int num4 = data[offset];
-            int num5 = 0;
-            int num6 = num3 - 1;
-            while ((num4 != 0 || num5 < num2) && num6 >= 0) {
-                num4 += 256 * array[num6];
-                array[num6] = (byte)(num4 % 58);
-                num4 /= 58;
-                num5++;
-                num6--;
+            int carry = data[offset];
+            var i = 0;
+            for (var j = size - 1; (carry != 0 || i < length) && j >= 0; j--, i++) {
+                carry += 256 * buffer[j];
+                buffer[j] = (byte)(carry % 58);
+                carry /= 58;
             }
-
-            num2 = num5;
+            length = i;
             offset++;
         }
 
-        int i;
-        for (i = num3 - num2; i != num3 && array[i] == 0; i++) { }
+        // Skip leading zeros in buffer
+        var startIndex = size - length;
+        while (startIndex < size && buffer[startIndex] == 0)
+            startIndex++;
 
-        char[] array2 = new char[num + num3 - i];
+        // Prepare output char array with leading '1's for each leading zero byte
+        var result = new char[zeroCount + size - startIndex];
+        Array.Fill(result, '1', 0, zeroCount);
 
-        Array.Fill(array2, '1', 0, num);
-
-        int num7 = num;
-
-        while (i != num3) {
-            array2[num7++] = PszBase58[array[i++]];
+        var k = zeroCount;
+        while (startIndex < size) {
+            result[k++] = PszBase58[buffer[startIndex++]];
         }
 
-        return new string(array2);
+        return new string(result);
     }
 
+    /// <summary>
+    ///     Decodes a Base58-encoded span of characters to a byte array.
+    /// </summary>
     public static byte[] DecodeData(ReadOnlySpan<char> encoded)
     {
-        int i;
-        for (i = 0; i < encoded.Length && DataEncoder.IsSpace(encoded[i]); i++) { }
+        var i = 0;
+        // Skip leading whitespaces
+        while (i < encoded.Length && DataEncoder.IsSpace(encoded[i])) i++;
 
-        int num = 0;
-        int num2 = 0;
-        for (; i < encoded.Length && encoded[i] == '1'; i++) {
-            num++;
+        var zeroCount = 0;
+        var length = 0;
+
+        // Count leading '1's which represent zero bytes
+        while (i < encoded.Length && encoded[i] == '1') {
+            zeroCount++;
+            i++;
         }
 
-        int num3 = (encoded.Length - i) * 733 / 1000 + 1;
-        byte[] array = new byte[num3];
-        for (; i < encoded.Length && !DataEncoder.IsSpace(encoded[i]); i++) {
-            int num4 = MapBase58[(byte)encoded[i]];
-            if (num4 == -1) {
-                throw new FormatException("Invalid base58 data");
+        var size = (encoded.Length - i) * 733 / 1000 + 1;
+        var buffer = new byte[size];
+
+        // Decode Base58 characters to bytes
+        while (i < encoded.Length && !DataEncoder.IsSpace(encoded[i])) {
+            var carry = MapBase58[(byte)encoded[i]];
+            if (carry == -1) throw new FormatException("Invalid base58 data");
+
+            var j = 0;
+            for (var k = size - 1; (carry != 0 || j < length) && k >= 0; k--, j++) {
+                carry += 58 * buffer[k];
+                buffer[k] = (byte)(carry % 256);
+                carry /= 256;
             }
-
-            int num5 = 0;
-            int num6 = num3 - 1;
-            while ((num4 != 0 || num5 < num2) && num6 >= 0) {
-                num4 += 58 * array[num6];
-                array[num6] = (byte)(num4 % 256);
-                num4 /= 256;
-                num5++;
-                num6--;
-            }
-
-            num2 = num5;
+            length = j;
+            i++;
         }
 
-        for (; i < encoded.Length && DataEncoder.IsSpace(encoded[i]); i++) { }
+        // Skip trailing whitespaces
+        while (i < encoded.Length && DataEncoder.IsSpace(encoded[i])) i++;
 
-        if (i != encoded.Length) {
-            throw new FormatException("Invalid base58 data");
-        }
+        // If not at end, invalid input detected
+        if (i != encoded.Length) throw new FormatException("Invalid base58 data");
 
-        int num7 = num3 - num2;
-        byte[] array2 = new byte[num + num3 - num7];
+        var startIndex = size - length;
+        var result = new byte[zeroCount + size - startIndex];
+        Array.Fill(result, (byte)0, 0, zeroCount);
 
-        Array.Fill(array2, (byte)0, 0, num);
+        var pos = zeroCount;
+        while (startIndex < size)
+            result[pos++] = buffer[startIndex++];
 
-        int num8 = num;
-
-        while (num7 != num3) {
-            array2[num8++] = array[num7++];
-        }
-
-        return array2;
+        return result;
     }
 
+    /// <summary>
+    ///     Validates a Base58 string assuming no whitespace present.
+    /// </summary>
     public static bool IsValidWithoutWhitespace(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        for (int i = 0; i < value.Length; i++) {
-            if (!Validator.ContainsKey(value[i])) {
+        foreach (var ch in value.AsSpan()) {
+            if (!Validator.ContainsKey(ch))
                 return false;
-            }
         }
 
         return true;

@@ -1,16 +1,18 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text;
+// ReSharper disable MemberHidesStaticFromOuterClass
 
 namespace BosonWare.TUI;
 
 /// <summary>
 /// Provides thread-safe console operations.
 /// </summary>
+[PublicAPI]
 public static class SmartConsole
 {
     private sealed class ThreadedConsole
     {
-        private volatile bool _isLocked = false;
+        private volatile bool _isLocked;
 
         /// <summary>
         /// Locks the console to prevent writing.
@@ -74,15 +76,15 @@ public static class SmartConsole
         }
     }
 
-    private static readonly ThreadedConsole _consoleInstance = new();
+    private static readonly ThreadedConsole ConsoleInstance = new();
 
     /// <summary>
     /// Locks the console to prevent writing.
     /// </summary>
     public static void Lock()
     {
-        lock (_consoleInstance) {
-            _consoleInstance.Lock();
+        lock (ConsoleInstance) {
+            ConsoleInstance.Lock();
         }
     }
 
@@ -91,8 +93,8 @@ public static class SmartConsole
     /// </summary>
     public static void Unlock()
     {
-        lock (_consoleInstance) {
-            _consoleInstance.Unlock();
+        lock (ConsoleInstance) {
+            ConsoleInstance.Unlock();
         }
     }
 
@@ -122,8 +124,8 @@ public static class SmartConsole
     /// <param name="color">The color of the message.</param>
     public static void WriteLine(object? message, ConsoleColor? color = null)
     {
-        lock (_consoleInstance) {
-            _consoleInstance.WriteLine(FormatObjectAsString(message), color);
+        lock (ConsoleInstance) {
+            ConsoleInstance.WriteLine(FormatObjectAsString(message), color);
         }
     }
 
@@ -134,8 +136,8 @@ public static class SmartConsole
     /// <param name="color">The color of the message.</param>
     public static void Write(object? message, ConsoleColor? color = null)
     {
-        lock (_consoleInstance) {
-            _consoleInstance.Write(FormatObjectAsString(message), color);
+        lock (ConsoleInstance) {
+            ConsoleInstance.Write(FormatObjectAsString(message), color);
         }
     }
 
@@ -147,8 +149,8 @@ public static class SmartConsole
     /// <returns>The input from the console.</returns>
     public static string ReadLine(string prompt, ConsoleColor? color = null)
     {
-        lock (_consoleInstance) {
-            return _consoleInstance.ReadLine(prompt, color);
+        lock (ConsoleInstance) {
+            return ConsoleInstance.ReadLine(prompt, color);
         }
     }
 
@@ -181,23 +183,20 @@ public static class SmartConsole
             }
         }
 
-        if (confirm) {
-            var password = builder.ToString();
+        if (!confirm)
+            return builder.ToString();
 
-            while (true) {
-                var confirmationPassword = ReadPassword(confirmPrompt, confirm: false);
+        var password = builder.ToString();
 
-                if (confirmationPassword != password) {
-                    Console.WriteLine("The confirmation password does not match the original one. Try again.");
+        while (true) {
+            var confirmationPassword = ReadPassword(confirmPrompt, confirm: false);
 
-                    continue;
-                }
-
+            if (confirmationPassword == password)
                 return password;
-            }
-        }
 
-        return builder.ToString();
+            Console.WriteLine("The confirmation password does not match the original one. Try again.");
+
+        }
     }
 
     /// <summary>

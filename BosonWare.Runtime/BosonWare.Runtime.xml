@@ -236,7 +236,7 @@
             <para>
             The cache does not implement background cleanup; expired entries are removed lazily
             when accessed or overwritten. For long-running applications, consider periodic
-            manual cleanup using <see cref="M:BosonWare.Cache`1.Clear"/> if memory usage becomes a concern.
+            manual cleanup using <see cref="M:BosonWare.Cache`1.ClearExpired"/> if memory usage becomes a concern.
             </para>
             </remarks>
             <example>
@@ -276,6 +276,18 @@
             <code>
             Cache&lt;string&gt;.Clear(); // Clears only string cache
             Cache&lt;int&gt;.Clear();    // Clears only int cache (separate instance)
+            </code>
+            </example>
+        </member>
+        <member name="M:BosonWare.Cache`1.ClearExpired">
+            <summary>
+            Removes all expired cached values for the current type T.
+            This operation is atomic and thread-safe.
+            </summary>
+            <example>
+            <code>
+            Cache&lt;string&gt;.ClearExpired(); // Clears only string cache
+            Cache&lt;int&gt;.ClearExpired();    // Clears only int cache (separate instance)
             </code>
             </example>
         </member>
@@ -400,7 +412,7 @@
             that could affect cache consistency.
             </remarks>
         </member>
-        <member name="M:BosonWare.Cache`1.CachedValue.#ctor(`0,System.Int64)">
+        <member name="M:BosonWare.Cache`1.CachedValue.#ctor(`0,System.Int64,System.TimeSpan)">
             <summary>
             Immutable structure that stores a cached value along with its creation timestamp.
             Used internally by the Cache&lt;T&gt; class to track value expiration.

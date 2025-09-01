@@ -52,7 +52,7 @@ public sealed class AesEncryptionService : IEncryptionService
 
 		cryptoStream.CopyTo(resultStream);
 
-		byte[] decryptedBytes = resultStream.ToArray();
+		var decryptedBytes = resultStream.ToArray();
 
 		return decryptedBytes;
 	}

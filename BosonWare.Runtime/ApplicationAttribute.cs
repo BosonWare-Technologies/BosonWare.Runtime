@@ -10,6 +10,7 @@ namespace BosonWare;
 /// [assembly: Application("MyApp", Folder = SpecialFolder.ApplicationData, Version = "2.1.0")]
 /// </code>
 /// </example>
+[PublicAPI]
 [AttributeUsage(AttributeTargets.Assembly)]
 public sealed class ApplicationAttribute(string name) : Attribute
 {

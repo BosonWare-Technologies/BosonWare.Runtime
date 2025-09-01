@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace BosonWare.Persistence;
 
+[PublicAPI]
 public class PersistentList<T>(string location) : PersistentObject<PersistentList<T>>(location), IList<T>
 {
     private readonly List<T> _items = [];
