@@ -524,6 +524,53 @@
             <param name="message">The original message that was signed. Defaults to "Hello" if not specified.</param>
             <returns><c>true</c> if the signature is valid for the given message and public key; otherwise, <c>false</c>.</returns>
         </member>
+        <member name="T:BosonWare.Encoding.Base58">
+            <summary>
+                Base58 encoder and decoder.
+            </summary>
+        </member>
+        <member name="M:BosonWare.Encoding.Base58.EncodeData(System.ReadOnlySpan{System.Byte})">
+            <summary>
+                Encodes a byte span into a Base58 string.
+            </summary>
+        </member>
+        <member name="M:BosonWare.Encoding.Base58.EncodeData(System.ReadOnlySpan{System.Byte},System.Int32,System.Int32)">
+            <summary>
+                Encodes a segment of a byte span into Base58 string.
+            </summary>
+        </member>
+        <member name="M:BosonWare.Encoding.Base58.DecodeData(System.ReadOnlySpan{System.Char})">
+            <summary>
+                Decodes a Base58-encoded span of characters to a byte array.
+            </summary>
+        </member>
+        <member name="M:BosonWare.Encoding.Base58.IsValidWithoutWhitespace(System.String)">
+            <summary>
+                Validates a Base58 string assuming no whitespace present.
+            </summary>
+        </member>
+        <member name="T:BosonWare.Encoding.OptimizedBase58">
+            <summary>
+                Memory-optimized Base58 encoder and decoder.
+                Uses unsafe memory operations for potentially better performance.
+            </summary>
+        </member>
+        <member name="M:BosonWare.Encoding.OptimizedBase58.EncodeData(System.ReadOnlySpan{System.Byte})">
+            <summary>
+                Memory-optimized Base58 encoding for a byte span.
+            </summary>
+        </member>
+        <member name="M:BosonWare.Encoding.OptimizedBase58.EncodeData(System.ReadOnlySpan{System.Byte},System.Int32,System.Int32)">
+            <summary>
+                Memory-optimized Base58 encoding for a segment of a byte span.
+                Uses UnsafeMemory for better memory management.
+            </summary>
+        </member>
+        <member name="M:BosonWare.Encoding.OptimizedBase58.DecodeData(System.ReadOnlySpan{System.Char})">
+            <summary>
+                Memory-optimized Base58 decoding from a span of encoded characters.
+            </summary>
+        </member>
         <member name="T:BosonWare.TUI.SmartConsole">
             <summary>
             Provides thread-safe console operations.
@@ -650,6 +697,82 @@
             <param name="prompt">The prompt to display, which may contain markup codes.</param>
             <param name="history">A list of previous input strings for history navigation.</param>
             <returns>The line of input entered by the user.</returns>
+        </member>
+        <member name="T:JetBrains.Annotations.ImplicitUseKindFlags">
+            <summary>
+                Specifies the details of an implicitly used symbol when it is marked
+                with <see cref="T:JetBrains.Annotations.MeansImplicitUseAttribute" /> or
+                <see cref="T:JetBrains.Annotations.UsedImplicitlyAttribute" />.
+            </summary>
+        </member>
+        <member name="F:JetBrains.Annotations.ImplicitUseKindFlags.Access">
+            <summary>Only entity marked with attribute considered used.</summary>
+        </member>
+        <member name="F:JetBrains.Annotations.ImplicitUseKindFlags.Assign">
+            <summary>Indicates implicit assignment to a member.</summary>
+        </member>
+        <member name="F:JetBrains.Annotations.ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature">
+            <summary>
+                Indicates implicit instantiation of a type with fixed constructor signature.
+                That means any unused constructor parameters won't be reported as such.
+            </summary>
+        </member>
+        <member name="F:JetBrains.Annotations.ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature">
+            <summary>Indicates implicit instantiation of a type.</summary>
+        </member>
+        <member name="T:JetBrains.Annotations.ImplicitUseTargetFlags">
+            <summary>
+                Specifies what is considered to be used implicitly when marked
+                with <see cref="T:JetBrains.Annotations.MeansImplicitUseAttribute" /> or
+                <see cref="T:JetBrains.Annotations.UsedImplicitlyAttribute" />.
+            </summary>
+        </member>
+        <member name="F:JetBrains.Annotations.ImplicitUseTargetFlags.Members">
+            <summary>Members of the type marked with the attribute are considered used.</summary>
+        </member>
+        <member name="F:JetBrains.Annotations.ImplicitUseTargetFlags.WithInheritors">
+            <summary> Inherited entities are considered used. </summary>
+        </member>
+        <member name="F:JetBrains.Annotations.ImplicitUseTargetFlags.WithMembers">
+            <summary>Entity marked with the attribute and all its members considered used.</summary>
+        </member>
+        <member name="T:JetBrains.Annotations.MeansImplicitUseAttribute">
+            <summary>
+                Can be applied to attributes, type parameters, and parameters of a type assignable from
+                <see cref="T:System.Type" /> .
+                When applied to an attribute, the decorated attribute behaves the same as
+                <see cref="T:JetBrains.Annotations.UsedImplicitlyAttribute" />.
+                When applied to a type parameter or to a parameter of type <see cref="T:System.Type" />,
+                indicates that the corresponding type is used implicitly.
+            </summary>
+        </member>
+        <member name="T:JetBrains.Annotations.PublicAPIAttribute">
+            <summary>
+            </summary>
+        </member>
+        <member name="T:JetBrains.Annotations.UsedImplicitlyAttribute">
+            <summary>
+                Indicates that the marked symbol is used implicitly (e.g. via reflection, in external library),
+                so this symbol will be ignored by usage-checking inspections. <br />
+                You can use <see cref="T:JetBrains.Annotations.ImplicitUseKindFlags" /> and
+                <see cref="T:JetBrains.Annotations.ImplicitUseTargetFlags" />
+                to configure how this attribute is applied.
+            </summary>
+            <example>
+                <code>
+            [UsedImplicitly]
+            public class TypeConverter {}
+            
+            public class SummaryData
+            {
+              [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature)]
+              public SummaryData() {}
+            }
+            
+            [UsedImplicitly(ImplicitUseTargetFlags.WithInheritors | ImplicitUseTargetFlags.Default)]
+            public interface IService {}
+            </code>
+            </example>
         </member>
     </members>
 </doc>

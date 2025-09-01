@@ -72,4 +72,13 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 Developed by CodingBoson at BosonWare, Technologies.
 
 ## Release Notes
-- Use `DateTime.UtcNow.Ticks` instead of 'DateTime.Now.TimeOfDay'.
+Add memory-optimized Base58 encoding implementation
+
+Introduces a new optimized Base58 encoder/decoder that uses unsafe memory operations for better performance. 
+
+Implementation includes:
+- Memory-efficient encoding and decoding using UnsafeMemory
+- Leading zero handling and whitespace trimming
+- Proper error handling for invalid Base58 data
+
+Adds supporting JetBrains annotation attributes for better code analysis and documentation.
